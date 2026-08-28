@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fuel Route Planner</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script>
+
+    // Create map
+    const map = L.map("map").setView(
+        [36.0, -120.0],
+        6
+    );
+
+
+    // OpenStreetMap tiles
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution:
+                '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+
+    // Request route from backend
+    fetch("/api/route/", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            start: {
+                lat: 37.7749,
+                lon: -122.4194
+            },
+
+            finish: {
+                lat: 34.0522,
+                lon: -118.2437
+            }
+
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        // Draw route
+        L.geoJSON(
+            data.route.geometry
+        ).addTo(map);
+
+        // Fit map to route
+        const routeLayer = L.geoJSON(
+            data.route.geometry
+        );
+
+        map.fitBounds(
+            routeLayer.getBounds()
+        );
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "Route request failed:",
+            error
+        );
+
+    });
+
+</script>
+
+</body>
+
+</html>

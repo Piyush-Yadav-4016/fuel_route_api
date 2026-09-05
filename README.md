@@ -1,6 +1,6 @@
 # Fuel Route API
 
-A Django REST API and browser map for planning fuel-efficient routes between two US locations.
+A Django REST API and browser map for planning fuel-efficient routes between two locations.
 
 ## Run locally
 
